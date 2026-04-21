@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to Story Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --black: #0a0a0a;
+            --white: #f5f0e8;
+            --yellow: #f5d000;
+            --blue: #1a1aff;
+            --red: #ff2200;
+            --border: 2.5px solid #0a0a0a;
+            --shadow: 4px 4px 0px #0a0a0a;
+            --shadow-lg: 6px 6px 0px #0a0a0a;
+            --radius: 0px;
+            --font-sans: 'Space Grotesk', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+
+        body {
+            background-color: var(--white);
+            color: var(--black);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            padding: clamp(1rem, 4vw, 2.5rem);
+        }
+
+        /* ── header ── */
+        header {
+            border: var(--border);
+            box-shadow: var(--shadow-lg);
+            background: var(--yellow);
+            padding: clamp(1rem, 3vw, 1.75rem) clamp(1.25rem, 4vw, 2rem);
+            margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .logo-mark {
+            width: 44px;
+            height: 44px;
+            background: var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .logo-mark svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--yellow);
+        }
+
+        header h1 {
+            font-family: var(--font-mono);
+            font-size: clamp(1.1rem, 3vw, 1.5rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        header p {
+            font-size: clamp(0.75rem, 1.8vw, 0.85rem);
+            color: #444;
+            font-family: var(--font-mono);
+            margin-top: 2px;
+        }
+
+        /* ── main grid ── */
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+            gap: clamp(1rem, 3vw, 1.75rem);
+            align-items: start;
+        }
+
+        @media (max-width: 700px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── panel ── */
+        .panel {
+            border: var(--border);
+            box-shadow: var(--shadow);
+            background: #fff;
+        }
+
+        .panel-header {
+            background: var(--black);
+            color: var(--yellow);
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-header .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--yellow);
+            border-radius: 50%;
+        }
+
+        .panel-body {
+            padding: clamp(1rem, 3vw, 1.5rem);
+        }
+
+        /* ── upload zone ── */
+        .upload-zone {
+            border: 2.5px dashed var(--black);
+            background: var(--white);
+            padding: clamp(1.5rem, 4vw, 2.5rem) 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.15s;
+            position: relative;
+            margin-bottom: 1.25rem;
+        }
+
+        .upload-zone:hover,
+        .upload-zone.drag-over {
+            background: #ece7d8;
+        }
+
+        .upload-zone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .upload-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--black);
+            margin: 0 auto 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--yellow);
+        }
+
+        .upload-zone .label {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--black);
+        }
+
+        .upload-zone .sub {
+            font-size: 0.72rem;
+            color: #666;
+            margin-top: 4px;
+            font-family: var(--font-mono);
+        }
+
+        .file-name {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            background: var(--yellow);
+            border: var(--border);
+            padding: 4px 10px;
+            margin-top: 0.75rem;
+            display: none;
+            word-break: break-all;
+        }
+
+        /* ── button ── */
+        button[type="submit"] {
+            width: 100%;
+            padding: clamp(0.75rem, 2vw, 1rem) 1.5rem;
+            background: var(--black);
+            color: var(--yellow);
+            font-family: var(--font-mono);
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            border: var(--border);
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        button[type="submit"]:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px var(--black);
+        }
+
+        button[type="submit"]:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px var(--black);
+        }
+
+        button[type="submit"]:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: var(--shadow);
+        }
+
+        /* ── loading ── */
+        .loading-bar {
+            display: none;
+            margin-top: 1rem;
+            border: var(--border);
+            height: 10px;
+            background: #eee;
+            overflow: hidden;
+        }
+
+        .loading-bar .fill {
+            height: 100%;
+            width: 0%;
+            background: var(--yellow);
+            animation: load 2s ease-in-out infinite;
+        }
+
+        @keyframes load {
+            0%   { width: 0%; margin-left: 0; }
+            50%  { width: 60%; margin-left: 20%; }
+            100% { width: 0%; margin-left: 100%; }
+        }
+
+        .loading-text {
+            display: none;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: #555;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        /* ── output cards ── */
+        .output-stack {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(1rem, 2.5vw, 1.5rem);
+        }
+
+        .output-label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 6px;
+        }
+
+        .output-text {
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
+            line-height: 1.7;
+            color: var(--black);
+            min-height: 2.5rem;
+        }
+
+        .output-text.empty {
+            color: #bbb;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+        }
+
+        .audio-wrap {
+            margin-top: 0.5rem;
+        }
+
+        audio {
+            width: 100%;
+            accent-color: var(--black);
+        }
+
+        /* ── step indicator ── */
+        .steps {
+            display: flex;
+            gap: 0;
+            margin-bottom: 1.25rem;
+            border: var(--border);
+            overflow: hidden;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 8px 4px;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: #888;
+            background: #f0ebe0;
+            border-right: var(--border);
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .step:last-child { border-right: none; }
+        .step.active { background: var(--yellow); color: var(--black); }
+        .step.done   { background: var(--black); color: var(--yellow); }
+
+        /* ── accent strip ── */
+        .accent-strip {
+            height: 6px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--black) 0px,
+                var(--black) 10px,
+                var(--yellow) 10px,
+                var(--yellow) 20px
+            );
+            margin-bottom: clamp(1rem, 3vw, 1.75rem);
+        }
+
+        /* ── footer ── */
+        footer {
+            margin-top: clamp(1.5rem, 4vw, 2.5rem);
+            border-top: var(--border);
+            padding-top: 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: #888;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        @media (max-width: 480px) {
+            header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+            .steps .step { font-size: 0.55rem; padding: 6px 2px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-mark">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <div>
+            <h1>image-to-story.gen</h1>
+            <p>upload an image — get a caption, story &amp; audio</p>
+        </div>
+    </header>
+
+    <div class="accent-strip"></div>
+
+    <div class="layout">
+
+        <!-- LEFT: upload form -->
+        <div>
+            <div class="panel">
+                <div class="panel-header"><span class="dot"></span>input</div>
+                <div class="panel-body">
+
+                    <div class="steps" id="steps">
+                        <div class="step active" id="s1">01 upload</div>
+                        <div class="step" id="s2">02 caption</div>
+                        <div class="step" id="s3">03 story</div>
+                        <div class="step" id="s4">04 audio</div>
+                    </div>
+
+                    <form id="form">
+                        <div class="upload-zone" id="dropzone">
+                            <input type="file" name="image" id="fileInput" accept="image/*" required>
+                            <div class="upload-icon">
+                                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                            </div>
+                            <div class="label">drop image here or click</div>
+                            <div class="sub">jpg · png · webp · gif</div>
+                        </div>
+                        <div class="file-name" id="fileName"></div>
+
+                        <button type="submit" id="submitBtn">generate story</button>
+
+                        <div class="loading-bar" id="loadingBar"><div class="fill"></div></div>
+                        <div class="loading-text" id="loadingText">processing...</div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: outputs -->
+        <div class="output-stack">
+
+            <div class="panel">
+                <div class="panel-header"><span class="dot"></span>caption</div>
+                <div class="panel-body">
+                    <p class="output-text empty" id="caption">awaiting image...</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header"><span class="dot"></span>story</div>
+                <div class="panel-body">
+                    <p class="output-text empty" id="story">awaiting image...</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header"><span class="dot"></span>audio</div>
+                <div class="panel-body">
+                    <div class="audio-wrap">
+                        <audio id="audio" controls style="display:none;"></audio>
+                        <p class="output-text empty" id="audioEmpty">awaiting image...</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <span>image-to-story-generator</span>
+        <span>blip · distilgpt2 · gtts · langchain</span>
+    </footer>
+
+    <script>
+        const form       = document.getElementById("form");
+        const fileInput  = document.getElementById("fileInput");
+        const fileName   = document.getElementById("fileName");
+        const submitBtn  = document.getElementById("submitBtn");
+        const loadingBar = document.getElementById("loadingBar");
+        const loadingTxt = document.getElementById("loadingText");
+        const dropzone   = document.getElementById("dropzone");
+
+        const steps = ["s1","s2","s3","s4"];
+
+        function setStep(n) {
+            steps.forEach((id, i) => {
+                const el = document.getElementById(id);
+                el.className = "step" + (i < n ? " done" : i === n ? " active" : "");
+            });
+        }
+
+        fileInput.addEventListener("change", () => {
+            if (fileInput.files[0]) {
+                fileName.textContent = fileInput.files[0].name;
+                fileName.style.display = "block";
+            }
+        });
+
+        dropzone.addEventListener("dragover", e => { e.preventDefault(); dropzone.classList.add("drag-over"); });
+        dropzone.addEventListener("dragleave", () => dropzone.classList.remove("drag-over"));
+        dropzone.addEventListener("drop", e => {
+            e.preventDefault();
+            dropzone.classList.remove("drag-over");
+            if (e.dataTransfer.files[0]) {
+                fileInput.files = e.dataTransfer.files;
+                fileName.textContent = e.dataTransfer.files[0].name;
+                fileName.style.display = "block";
+            }
+        });
+
+        function setOutput(id, text, emptyId) {
+            const el = document.getElementById(id);
+            el.textContent = text;
+            el.classList.remove("empty");
+            if (emptyId) document.getElementById(emptyId).style.display = "none";
+        }
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            loadingBar.style.display = "block";
+            loadingTxt.style.display = "block";
+            setStep(1);
+
+            const formData = new FormData(form);
+
+            try {
+                const res  = await fetch("/generate", { method: "POST", body: formData });
+                const data = await res.json();
+
+                if (data.error) throw new Error(data.error);
+
+                setStep(1);
+                setOutput("caption", data.caption);
+                loadingTxt.textContent = "generating story...";
+
+                setStep(2);
+                setOutput("story", data.story);
+                loadingTxt.textContent = "synthesising audio...";
+
+                setStep(3);
+                const audio = document.getElementById("audio");
+                audio.src = data.audio_url;
+                audio.style.display = "block";
+                document.getElementById("audioEmpty").style.display = "none";
+
+                setStep(4);
+                loadingTxt.textContent = "done.";
+
+                setTimeout(() => {
+                    window.location.href = `/result?caption=${encodeURIComponent(data.caption)}&story=${encodeURIComponent(data.story)}&audio=${encodeURIComponent(data.audio_url)}`;
+                }, 800);
+
+            } catch (err) {
+                loadingTxt.textContent = "error: " + err.message;
+                loadingTxt.style.color = "#ff2200";
+                setStep(0);
+            } finally {
+                loadingBar.style.display = "none";
+                submitBtn.disabled = false;
+            }
+        };
+    </script>
+
+</body>
+</html>

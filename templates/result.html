@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generated Result</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --black: #0a0a0a;
+            --white: #f5f0e8;
+            --yellow: #f5d000;
+            --blue: #1a1aff;
+            --red: #ff2200;
+            --border: 2.5px solid #0a0a0a;
+            --shadow: 4px 4px 0px #0a0a0a;
+            --shadow-lg: 6px 6px 0px #0a0a0a;
+            --font-sans: 'Space Grotesk', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+
+        body {
+            background-color: var(--white);
+            color: var(--black);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            padding: clamp(1rem, 4vw, 2.5rem);
+        }
+
+        /* ── header ── */
+        header {
+            border: var(--border);
+            box-shadow: var(--shadow-lg);
+            background: var(--black);
+            color: var(--yellow);
+            padding: clamp(1rem, 3vw, 1.75rem) clamp(1.25rem, 4vw, 2rem);
+            margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-mark {
+            width: 44px;
+            height: 44px;
+            background: var(--yellow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .logo-mark svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--black);
+        }
+
+        header h1 {
+            font-family: var(--font-mono);
+            font-size: clamp(1rem, 2.5vw, 1.3rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        header p {
+            font-size: 0.72rem;
+            color: #aaa;
+            font-family: var(--font-mono);
+            margin-top: 2px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: var(--yellow);
+            color: var(--black);
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: var(--border);
+            border-color: var(--yellow);
+            box-shadow: 3px 3px 0px var(--yellow);
+            transition: transform 0.1s, box-shadow 0.1s;
+            flex-shrink: 0;
+        }
+
+        .back-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 5px 5px 0px var(--yellow);
+        }
+
+        .back-btn:active {
+            transform: translate(1px, 1px);
+            box-shadow: 2px 2px 0px var(--yellow);
+        }
+
+        /* ── accent strip ── */
+        .accent-strip {
+            height: 6px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--yellow) 0px,
+                var(--yellow) 10px,
+                var(--black) 10px,
+                var(--black) 20px
+            );
+            margin-bottom: clamp(1rem, 3vw, 1.75rem);
+        }
+
+        /* ── result grid ── */
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto;
+            gap: clamp(1rem, 2.5vw, 1.5rem);
+        }
+
+        .span-full {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 640px) {
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+            .span-full { grid-column: 1; }
+        }
+
+        /* ── panel ── */
+        .panel {
+            border: var(--border);
+            box-shadow: var(--shadow);
+            background: #fff;
+        }
+
+        .panel-header {
+            background: var(--black);
+            color: var(--yellow);
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-header .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--yellow);
+            border-radius: 50%;
+        }
+
+        .panel-header .badge {
+            margin-left: auto;
+            background: var(--yellow);
+            color: var(--black);
+            font-size: 0.6rem;
+            padding: 2px 8px;
+            font-weight: 700;
+        }
+
+        .panel-body {
+            padding: clamp(1rem, 3vw, 1.5rem);
+        }
+
+        /* ── text content ── */
+        .output-text {
+            font-size: clamp(0.88rem, 2vw, 1rem);
+            line-height: 1.75;
+            color: var(--black);
+        }
+
+        .story-text {
+            font-size: clamp(1rem, 2.5vw, 1.15rem);
+            line-height: 1.9;
+            font-style: italic;
+        }
+
+        .story-text::before {
+            content: '"';
+            font-size: 3rem;
+            font-family: Georgia, serif;
+            color: var(--yellow);
+            line-height: 0;
+            vertical-align: -0.6rem;
+            margin-right: 4px;
+        }
+
+        /* ── audio ── */
+        audio {
+            width: 100%;
+            accent-color: var(--black);
+            margin-top: 0.25rem;
+        }
+
+        .audio-label {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        /* ── stat row ── */
+        .stat-row {
+            display: flex;
+            gap: 0;
+            border: var(--border);
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+
+        .stat {
+            flex: 1;
+            padding: 10px 12px;
+            border-right: var(--border);
+            background: var(--white);
+        }
+
+        .stat:last-child { border-right: none; }
+
+        .stat-label {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #888;
+        }
+
+        .stat-value {
+            font-family: var(--font-mono);
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            font-weight: 700;
+            color: var(--black);
+            margin-top: 2px;
+        }
+
+        /* ── footer ── */
+        footer {
+            margin-top: clamp(1.5rem, 4vw, 2.5rem);
+            border-top: var(--border);
+            padding-top: 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: #888;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        @media (max-width: 480px) {
+            header { flex-direction: column; align-items: flex-start; }
+            .back-btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <div class="logo-mark">
+                <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            </div>
+            <div>
+                <h1>generated result</h1>
+                <p>image-to-story-generator</p>
+            </div>
+        </div>
+        <a href="/" class="back-btn">&#8592; upload another</a>
+    </header>
+
+    <div class="accent-strip"></div>
+
+    <div class="result-grid">
+
+        <!-- caption -->
+        <div class="panel">
+            <div class="panel-header">
+                <span class="dot"></span>caption
+                <span class="badge">blip</span>
+            </div>
+            <div class="panel-body">
+                <p class="output-text" id="caption"></p>
+                <div class="stat-row" id="captionStats" style="display:none;">
+                    <div class="stat">
+                        <div class="stat-label">words</div>
+                        <div class="stat-value" id="captionWords">—</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">chars</div>
+                        <div class="stat-value" id="captionChars">—</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- audio -->
+        <div class="panel">
+            <div class="panel-header">
+                <span class="dot"></span>audio
+                <span class="badge">gtts</span>
+            </div>
+            <div class="panel-body">
+                <div class="audio-label">listen to the story</div>
+                <audio id="audio" controls></audio>
+            </div>
+        </div>
+
+        <!-- story spans full width -->
+        <div class="panel span-full">
+            <div class="panel-header">
+                <span class="dot"></span>story
+                <span class="badge">gpt2 + langchain</span>
+            </div>
+            <div class="panel-body">
+                <p class="output-text story-text" id="story"></p>
+                <div class="stat-row" id="storyStats" style="display:none;">
+                    <div class="stat">
+                        <div class="stat-label">words</div>
+                        <div class="stat-value" id="storyWords">—</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">chars</div>
+                        <div class="stat-value" id="storyChars">—</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">sentences</div>
+                        <div class="stat-value" id="storySent">—</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <span>image-to-story-generator</span>
+        <span>blip · gpt2 · gtts · langchain</span>
+    </footer>
+
+    <script>
+        const params  = new URLSearchParams(window.location.search);
+        const caption = params.get("caption") || "No caption generated.";
+        const story   = params.get("story")   || "No story generated.";
+        const audio   = params.get("audio");
+
+        document.getElementById("caption").textContent = caption;
+        document.getElementById("story").textContent   = story;
+
+        if (audio) {
+            document.getElementById("audio").src = audio;
+        }
+
+        function wordCount(t) { return t.trim().split(/\s+/).filter(Boolean).length; }
+        function sentCount(t) { return (t.match(/[.!?]+/g) || []).length || 1; }
+
+        const cw = wordCount(caption);
+        const sw = wordCount(story);
+
+        document.getElementById("captionWords").textContent = cw;
+        document.getElementById("captionChars").textContent = caption.length;
+        document.getElementById("captionStats").style.display = "flex";
+
+        document.getElementById("storyWords").textContent = sw;
+        document.getElementById("storyChars").textContent = story.length;
+        document.getElementById("storySent").textContent  = sentCount(story);
+        document.getElementById("storyStats").style.display = "flex";
+    </script>
+
+</body>
+</html>
